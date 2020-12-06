@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Line } from 'react-chartjs-2';
 const ApiKey = 'SUN8GZHZ6UIJ6DE6';
 const requestGone =
@@ -11,6 +11,7 @@ function ErrorMessage() {
     </p>
   );
 }
+
 function App() {
   const [stockSymbol, setStockSymbol] = useState('AMZN');
   const [rawData, setRawData] = useState(false);
@@ -18,15 +19,17 @@ function App() {
   const [searchBarSuggestions, setSearchBarSuggestions] = useState(false);
   let stockDate = [];
   let stockPrice = [];
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(
-        `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${stockSymbol}&outputsize=compact&apikey=${ApiKey}`,
-      );
-      setRawData(await response.json());
-    };
-    fetchData();
+  const fetchData = async (stockSymbol) => {
+    const response = await fetch(
+      `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${stockSymbol}&outputsize=compact&apikey=${ApiKey}`,
+    );
+    setRawData(await response.json());
+    console.log('test');
+  };
+  useMemo(() => {
+    return fetchData(stockSymbol);
   }, [stockSymbol]);
+  console.log(stockSymbol);
 
   useEffect(() => {
     const fetchData = async () => {
